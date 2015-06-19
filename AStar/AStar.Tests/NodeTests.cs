@@ -8,8 +8,8 @@ namespace AStar.Tests
         [Test]
         public void NewNode_WithCoordinates12_HasCoordinates12()
         {
-            int x = 1;
-            int y = 2;
+            const int x = 1;
+            const int y = 2;
 
             var node = new Node(new Coordinate(x, y));
 

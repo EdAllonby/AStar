@@ -49,7 +49,9 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CoordinateTests.cs" />
     <Compile Include="GridTests.cs" />
+    <Compile Include="ManhattanCalculatorTests.cs" />
     <Compile Include="NodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

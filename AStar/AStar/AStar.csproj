@@ -37,6 +37,7 @@
     <Compile Include="AStarGrid.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="IHeuristicCalculator.cs" />
+    <Compile Include="IterationDetails.cs" />
     <Compile Include="ManhattanCalculator.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

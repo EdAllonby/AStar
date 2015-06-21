@@ -49,7 +49,7 @@ namespace AStar.WPF
             }
         }
 
-        private void StartSearch(object sender, RoutedEventArgs e)
+        private async void StartSearch(object sender, RoutedEventArgs e)
         {
             List<Node> nodes = new List<Node>();
             Node startNode = null;
@@ -72,7 +72,9 @@ namespace AStar.WPF
 
             AStarGrid grid = new AStarGrid(nodes) {StartNode = startNode, EndNode = endNode};
 
-            IEnumerable<Node> bestPath = grid.CalculatePath(new ManhattanCalculator());
+            grid.IterationComplete += grid_IterationComplete;
+
+            IEnumerable<Node> bestPath = await grid.CalculatePathAsync(new ManhattanCalculator());
 
             foreach (NodeControl nodeInPath in bestPath.Select(node => nodeControls.First(x => x.Node.Equals(node))))
             {
@@ -80,6 +82,21 @@ namespace AStar.WPF
                 {
                     nodeInPath.NodeType = NodeType.Path;
                 }
+            }
+        }
+
+        private void grid_IterationComplete(object sender, IterationDetails e)
+        {
+            foreach (Node openNode in e.OpenNodes)
+            {
+                NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
+                Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.OpenNode);
+            }
+
+            foreach (Node openNode in e.ClosedNodes)
+            {
+                NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
+                Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.ClosedNode);
             }
         }
 

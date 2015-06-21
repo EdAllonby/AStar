@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AStar
 {
@@ -24,7 +26,14 @@ namespace AStar
             get { return nodes; }
         }
 
-        public IEnumerable<Node> CalculatePath(IHeuristicCalculator heuristicCalculator)
+        public event EventHandler<IterationDetails> IterationComplete;
+
+        public Task<IEnumerable<Node>> CalculatePathAsync(IHeuristicCalculator heuristicCalculator)
+        {
+            return Task.Factory.StartNew(() => CalculatePath(heuristicCalculator));
+        }
+
+        private IEnumerable<Node> CalculatePath(IHeuristicCalculator heuristicCalculator)
         {
             if (EndNode == null || StartNode == null)
             {
@@ -35,16 +44,14 @@ namespace AStar
 
             CalculateHeuristics(heuristicCalculator);
 
-            AddBestNodeToClosedNodes(StartNode);
-            CalculateMoveCostsToSurroundingNodes(StartNode);
+            NewIteration(StartNode);
 
             bool foundPath = false;
 
             while (!foundPath)
             {
                 Node bestNode = FindBestNode();
-                AddBestNodeToClosedNodes(bestNode);
-                CalculateMoveCostsToSurroundingNodes(bestNode);
+                NewIteration(bestNode);
 
                 var endNodeParent = IsClosedNodeNextToEndNode();
 
@@ -56,6 +63,17 @@ namespace AStar
             }
 
             return GetBestPath();
+        }
+
+        private void NewIteration(Node bestNode)
+        {
+            AddBestNodeToClosedNodes(bestNode);
+            CalculateMoveCostsToSurroundingNodes(bestNode);
+
+            if (IterationComplete != null)
+            {
+                IterationComplete(this, new IterationDetails(openNodes, closedNodes));
+            }
         }
 
         private IEnumerable<Node> GetBestPath()
@@ -113,12 +131,15 @@ namespace AStar
 
         private void CalculateMoveCostsToSurroundingNodes(Node currentNode)
         {
-            List<Node> surroundingNodes = GetSurroundingNodes(currentNode).Where(node=>!node.IsWall).ToList();
-
-            AddSurroundingNodesToOpenList(surroundingNodes);
+            var surroundingNodes = GetSurroundingNodes(currentNode).Where(node => !node.IsWall);
 
             foreach (Node surroundingNode in surroundingNodes)
             {
+                if (!openNodes.Contains(surroundingNode) && !closedNodes.Contains(surroundingNode))
+                {
+                    openNodes.Add(surroundingNode);
+                }
+
                 if (openNodes.Contains(surroundingNode))
                 {
                     int moveCost = surroundingNode.Position.IsCoordinateDiagonal(currentNode.Position) ? DiagonalMoveCost : SimpleMoveCost;
@@ -141,17 +162,6 @@ namespace AStar
         private IEnumerable<Node> GetSurroundingNodes(Node node)
         {
             return Nodes.Where(possibleSurroundingNode => possibleSurroundingNode.Position.IsCoordinateNextTo(node.Position));
-        }
-
-        private void AddSurroundingNodesToOpenList(IEnumerable<Node> surroundingNodes)
-        {
-            foreach (Node surroundingNode in surroundingNodes.Where(surroundingNode => !openNodes.Contains(surroundingNode)))
-            {
-                if (!closedNodes.Contains(surroundingNode))
-                {
-                    openNodes.Add(surroundingNode);
-                }
-            }
         }
     }
 }

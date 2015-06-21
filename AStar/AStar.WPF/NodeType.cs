@@ -6,6 +6,8 @@
         StartNode,
         EndNode,
         Path,
-        Wall
+        Wall,
+        OpenNode,
+        ClosedNode,
     }
 }

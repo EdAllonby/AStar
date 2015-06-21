@@ -79,6 +79,12 @@ namespace AStar.WPF
                 case NodeType.Wall:
                     NodeControlGrid.Background = Brushes.Red;
                     break;
+                case NodeType.OpenNode:
+                    NodeControlGrid.Background = Brushes.Gainsboro;
+                    break;
+                case NodeType.ClosedNode:
+                    NodeControlGrid.Background = Brushes.DarkGray;
+                    break;
             }
         }
 

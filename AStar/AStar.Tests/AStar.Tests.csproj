@@ -56,13 +56,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AStar\AStar.csproj">
-      <Project>{B68AA068-2A39-4E61-B11D-E56C64DE28C5}</Project>
-      <Name>AStar</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\AStar\AStar.csproj">
+      <Project>{34CEF8DD-9D98-4F7D-AA4E-A25DD6E7126E}</Project>
+      <Name>AStar</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

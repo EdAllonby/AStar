@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-
-namespace AStar
+﻿namespace AStar
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

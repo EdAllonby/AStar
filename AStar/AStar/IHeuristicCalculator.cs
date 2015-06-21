@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace AStar
 {
     public interface IHeuristicCalculator

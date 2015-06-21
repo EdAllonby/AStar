@@ -61,7 +61,7 @@ namespace AStar
         private IEnumerable<Node> GetBestPath()
         {
             List<Node> path = new List<Node> {EndNode};
-            
+
             bool startNodeFound = false;
 
             Node lastNode = EndNode;

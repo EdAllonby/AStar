@@ -23,6 +23,11 @@ namespace AStar
             get { return y; }
         }
 
+        public bool Equals(Coordinate other)
+        {
+            return other.X == X && other.Y == Y;
+        }
+
         public bool IsCoordinateNextTo(Coordinate other)
         {
             if (Equals(other))
@@ -41,11 +46,6 @@ namespace AStar
             }
 
             return Math.Abs(other.X - X) == 1 && Math.Abs(other.Y - Y) == 1;
-        }
-
-        public bool Equals(Coordinate other)
-        {
-            return other.X == X && other.Y == Y;
         }
     }
 }

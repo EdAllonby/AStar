@@ -5,6 +5,5 @@ namespace AStar.Tests
     [TestFixture]
     public class GridTests
     {
-
     }
 }

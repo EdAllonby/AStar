@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +11,9 @@ namespace AStar.WPF
     /// </summary>
     public partial class MainWindow
     {
-        private readonly int GridSize = 50;
+        private readonly int GridSize = 35;
+        private readonly int NodeSize = 40;
+
         private readonly List<NodeControl> nodeControls = new List<NodeControl>();
 
         public MainWindow()
@@ -36,7 +39,7 @@ namespace AStar.WPF
 
                 for (int nodeColumn = 0; nodeColumn < GridSize; nodeColumn++)
                 {
-                    NodeControl nodeControl = new NodeControl(nodeColumn, stackPanelRow) {Height = 20, Width = 20};
+                    NodeControl nodeControl = new NodeControl(nodeColumn, stackPanelRow) { Height = NodeSize, Width = NodeSize };
 
                     nodeControls.Add(nodeControl);
 
@@ -74,8 +77,15 @@ namespace AStar.WPF
 
             grid.IterationComplete += grid_IterationComplete;
 
-            IEnumerable<Node> bestPath = await grid.CalculatePathAsync(new ManhattanCalculator());
+            Task<IEnumerable<Node>> bestPathTask = grid.CalculatePathAsync(new ManhattanCalculator());
 
+            foreach (NodeControl nodeControl in nodeControls)
+            {
+                nodeControl.Heuristic.Content = nodeControl.Node.Heuristic.ToString();
+            }
+
+            IEnumerable<Node> bestPath = await bestPathTask;
+            
             foreach (NodeControl nodeInPath in bestPath.Select(node => nodeControls.First(x => x.Node.Equals(node))))
             {
                 if (nodeInPath.NodeType != NodeType.StartNode && nodeInPath.NodeType != NodeType.EndNode)
@@ -91,12 +101,14 @@ namespace AStar.WPF
             {
                 NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
                 Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.OpenNode);
+                Application.Current.Dispatcher.Invoke(() => node.FValue.Content = node.Node.F);
             }
 
             foreach (Node openNode in e.ClosedNodes)
             {
                 NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
                 Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.ClosedNode);
+                Application.Current.Dispatcher.Invoke(() => node.FValue.Content = node.Node.F);
             }
         }
 

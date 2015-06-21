@@ -7,8 +7,8 @@ namespace AStar
 {
     public sealed class AStarGrid
     {
-        private const int DiagonalMoveCost = 14;
-        private const int SimpleMoveCost = 10;
+        private const int DiagonalMoveCost = 1;
+        private const int SimpleMoveCost = 5;
         private readonly List<Node> closedNodes = new List<Node>();
         private readonly List<Node> nodes;
         private readonly List<Node> openNodes = new List<Node>();
@@ -20,11 +20,6 @@ namespace AStar
 
         public Node EndNode { get; set; }
         public Node StartNode { get; set; }
-
-        public IEnumerable<Node> Nodes
-        {
-            get { return nodes; }
-        }
 
         public event EventHandler<IterationDetails> IterationComplete;
 
@@ -43,7 +38,6 @@ namespace AStar
             Reset();
 
             CalculateHeuristics(heuristicCalculator);
-
             NewIteration(StartNode);
 
             bool foundPath = false;
@@ -131,7 +125,7 @@ namespace AStar
 
         private void CalculateMoveCostsToSurroundingNodes(Node currentNode)
         {
-            var surroundingNodes = GetSurroundingNodes(currentNode).Where(node => !node.IsWall);
+            IEnumerable<Node> surroundingNodes = GetSurroundingNodes(currentNode).Where(node => !node.IsWall);
 
             foreach (Node surroundingNode in surroundingNodes)
             {
@@ -161,7 +155,7 @@ namespace AStar
 
         private IEnumerable<Node> GetSurroundingNodes(Node node)
         {
-            return Nodes.Where(possibleSurroundingNode => possibleSurroundingNode.Position.IsCoordinateNextTo(node.Position));
+            return nodes.Where(possibleSurroundingNode => possibleSurroundingNode.Position.IsCoordinateNextTo(node.Position));
         }
     }
 }

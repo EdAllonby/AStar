@@ -34,8 +34,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AStarGrid.cs" />
     <Compile Include="Coordinate.cs" />
-    <Compile Include="Grid.cs" />
     <Compile Include="IHeuristicCalculator.cs" />
     <Compile Include="ManhattanCalculator.cs" />
     <Compile Include="Node.cs" />

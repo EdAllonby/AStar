@@ -12,12 +12,14 @@
             this.position = position;
         }
 
+        public bool IsWall { get; set; }
+
         public Node Parent
         {
             get { return parent; }
             set
             {
-                if (value != null)
+                if (value != this)
                 {
                     parent = value;
                 }
@@ -39,7 +41,7 @@
             get { return heuristic; }
             set
             {
-                if (value > 0)
+                if (value >= 0)
                 {
                     heuristic = value;
                 }
@@ -51,7 +53,7 @@
             get { return moveCost; }
             set
             {
-                if (value > 0)
+                if (value >= 0)
                 {
                     moveCost = value;
                 }
@@ -61,6 +63,13 @@
         public bool IsNew
         {
             get { return MoveCost == 0; }
+        }
+
+        public void Reset()
+        {
+            Heuristic = 0;
+            MoveCost = 0;
+            Parent = null;
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AStar
 {
-    public sealed class Grid
+    public sealed class AStarGrid
     {
         private const int DiagonalMoveCost = 14;
         private const int SimpleMoveCost = 10;
@@ -11,7 +11,7 @@ namespace AStar
         private readonly List<Node> nodes;
         private readonly List<Node> openNodes = new List<Node>();
 
-        public Grid(List<Node> nodes)
+        public AStarGrid(List<Node> nodes)
         {
             this.nodes = nodes;
         }
@@ -113,7 +113,7 @@ namespace AStar
 
         private void CalculateMoveCostsToSurroundingNodes(Node currentNode)
         {
-            List<Node> surroundingNodes = GetSurroundingNodes(currentNode).ToList();
+            List<Node> surroundingNodes = GetSurroundingNodes(currentNode).Where(node=>!node.IsWall).ToList();
 
             AddSurroundingNodesToOpenList(surroundingNodes);
 

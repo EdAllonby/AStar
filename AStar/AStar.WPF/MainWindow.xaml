@@ -1,6 +1,19 @@
-﻿<Window x:Class="AStar.MainWindow"
+﻿<Window x:Class="AStar.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid />
+        Title="MainWindow" Height="350" Width="525" WindowState="Maximized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Button Content="Find" Margin="5" Height="24" Width="74" Click="StartSearch" />
+            <Button Content="Clear" Margin="5" Height="24" Width="74" Click="ClearGrid" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Name="NodeGrid" />
+    </Grid>
+
 </Window>

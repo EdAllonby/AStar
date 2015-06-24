@@ -9,7 +9,7 @@ namespace AStar
             int xDifference = Math.Abs(currentNode.Position.X - endNode.Position.X);
             int yDifference = Math.Abs(currentNode.Position.Y - endNode.Position.Y);
 
-            currentNode.Heuristic = xDifference + yDifference;
+            currentNode.Heuristic = 10 * (xDifference + yDifference);
         }
     }
 }

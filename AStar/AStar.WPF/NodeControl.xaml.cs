@@ -62,6 +62,12 @@ namespace AStar.WPF
 
         private void UpdateView()
         {
+            ChangeColour();
+            FValue.Content = Node.F;
+        }
+
+        private void ChangeColour()
+        {
             switch (type)
             {
                 case NodeType.StartNode:

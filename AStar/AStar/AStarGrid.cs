@@ -7,8 +7,8 @@ namespace AStar
 {
     public sealed class AStarGrid
     {
-        private const int DiagonalMoveCost = 1;
-        private const int SimpleMoveCost = 5;
+        private const int DiagonalMoveCost = 5;
+        private const int SimpleMoveCost = 1;
         private readonly List<Node> closedNodes = new List<Node>();
         private readonly List<Node> nodes;
         private readonly List<Node> openNodes = new List<Node>();

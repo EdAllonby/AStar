@@ -11,8 +11,8 @@ namespace AStar.WPF
     /// </summary>
     public partial class MainWindow
     {
-        private readonly int GridSize = 35;
-        private readonly int NodeSize = 40;
+        private const int GridSize = 35;
+        private const int NodeSize = 40;
 
         private readonly List<NodeControl> nodeControls = new List<NodeControl>();
 
@@ -75,7 +75,7 @@ namespace AStar.WPF
 
             AStarGrid grid = new AStarGrid(nodes) {StartNode = startNode, EndNode = endNode};
 
-            grid.IterationComplete += grid_IterationComplete;
+            grid.IterationComplete += PathFindIterationComplete;
 
             Task<IEnumerable<Node>> bestPathTask = grid.CalculatePathAsync(new ManhattanCalculator());
 
@@ -95,20 +95,18 @@ namespace AStar.WPF
             }
         }
 
-        private void grid_IterationComplete(object sender, IterationDetails e)
+        private void PathFindIterationComplete(object sender, IterationDetails e)
         {
             foreach (Node openNode in e.OpenNodes)
             {
                 NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
                 Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.OpenNode);
-                Application.Current.Dispatcher.Invoke(() => node.FValue.Content = node.Node.F);
             }
 
             foreach (Node openNode in e.ClosedNodes)
             {
                 NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
                 Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.ClosedNode);
-                Application.Current.Dispatcher.Invoke(() => node.FValue.Content = node.Node.F);
             }
         }
 

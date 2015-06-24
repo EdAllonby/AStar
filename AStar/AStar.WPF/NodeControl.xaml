@@ -11,7 +11,7 @@
         <Grid Name="NodeControlGrid" >
             <StackPanel Orientation="Horizontal">
                 <Label FontSize="12" Name="Heuristic" />
-                <Label FontSize="12" Name="FValue" Foreground="Red"/>
+                <Label FontSize="12" Name="FValue" x:FieldModifier="private" Foreground="Red"/>
             </StackPanel>
         </Grid>
     </Border>

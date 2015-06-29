@@ -5,13 +5,13 @@ namespace AStar
 {
     public sealed class AStarPathFinderDetails : EventArgs
     {
-        private readonly List<Node> closedNodes;
+        private readonly Node newClosedNode;
         private readonly List<Node> openNodes;
 
-        public AStarPathFinderDetails(List<Node> openNodes, List<Node> closedNodes)
+        public AStarPathFinderDetails(List<Node> openNodes, Node newClosedNode)
         {
             this.openNodes = openNodes;
-            this.closedNodes = closedNodes;
+            this.newClosedNode = newClosedNode;
         }
 
         public List<Node> OpenNodes
@@ -19,9 +19,9 @@ namespace AStar
             get { return openNodes; }
         }
 
-        public List<Node> ClosedNodes
+        public Node NewClosedNode
         {
-            get { return closedNodes; }
+            get { return newClosedNode; }
         }
     }
 }

@@ -77,7 +77,7 @@ namespace AStar
 
             if (IterationComplete != null)
             {
-                IterationComplete(this, new AStarPathFinderDetails(openNodes, closedNodes));
+                IterationComplete(this, new AStarPathFinderDetails(openNodes, bestNode));
             }
         }
 

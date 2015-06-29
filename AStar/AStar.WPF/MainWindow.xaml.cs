@@ -100,15 +100,12 @@ namespace AStar.WPF
         {
             foreach (Node openNode in e.OpenNodes)
             {
-                NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
-                Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.OpenNode);
+                NodeControl openNodeControl = nodeControls.First(x => x.Node.Equals(openNode));
+                Application.Current.Dispatcher.Invoke(() => openNodeControl.NodeType = NodeType.OpenNode);
             }
 
-            foreach (Node openNode in e.ClosedNodes)
-            {
-                NodeControl node = nodeControls.First(x => x.Node.Equals(openNode));
-                Application.Current.Dispatcher.Invoke(() => node.NodeType = NodeType.ClosedNode);
-            }
+            NodeControl closedNode = nodeControls.First(x => x.Node.Equals(e.NewClosedNode));
+            Application.Current.Dispatcher.Invoke(() => closedNode.NodeType = NodeType.ClosedNode);
         }
 
         private void ClearGrid(object sender, RoutedEventArgs e)

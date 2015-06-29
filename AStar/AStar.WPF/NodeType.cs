@@ -8,6 +8,6 @@
         Path,
         Wall,
         OpenNode,
-        ClosedNode,
+        ClosedNode
     }
 }

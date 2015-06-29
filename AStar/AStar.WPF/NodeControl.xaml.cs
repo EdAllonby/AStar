@@ -29,14 +29,10 @@ namespace AStar.WPF
             }
         }
 
-        private void NodeControl_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ChangeType();
-        }
-
-        private void ChangeType()
+        private void ChangeTypeForClick()
         {
             type = NodeType.Empty;
+            Node.IsWall = false;
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
@@ -46,15 +42,10 @@ namespace AStar.WPF
             {
                 type = NodeType.EndNode;
             }
-
-            if (Keyboard.IsKeyDown(Key.LeftShift))
+            else if (Keyboard.IsKeyDown(Key.LeftShift))
             {
                 type = NodeType.Wall;
                 Node.IsWall = true;
-            }
-            else
-            {
-                Node.IsWall = false;
             }
 
             UpdateView();
@@ -98,6 +89,21 @@ namespace AStar.WPF
         {
             Node.Reset();
             NodeType = NodeType.Empty;
+        }
+
+        private void NodeControl_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                type = NodeType.Wall;
+                Node.IsWall = true;
+                UpdateView();
+            }
+        }
+
+        private void NodeControl_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ChangeTypeForClick();
         }
     }
 }

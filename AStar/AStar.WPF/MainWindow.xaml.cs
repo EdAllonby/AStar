@@ -13,7 +13,6 @@ namespace AStar.WPF
     {
         private const int GridSize = 35;
         private const int NodeSize = 40;
-
         private readonly List<NodeControl> nodeControls = new List<NodeControl>();
 
         public MainWindow()
@@ -39,14 +38,14 @@ namespace AStar.WPF
 
                 for (int nodeColumn = 0; nodeColumn < GridSize; nodeColumn++)
                 {
-                    NodeControl nodeControl = new NodeControl(nodeColumn, stackPanelRow) { Height = NodeSize, Width = NodeSize };
+                    NodeControl nodeControl = new NodeControl(nodeColumn, stackPanelRow) {Height = NodeSize, Width = NodeSize};
 
                     nodeControls.Add(nodeControl);
 
                     stackPanel.Children.Add(nodeControl);
                 }
 
-                stackPanel.SetValue(Grid.RowProperty, stackPanelRow);
+                stackPanel.SetValue(System.Windows.Controls.Grid.RowProperty, stackPanelRow);
 
                 NodeGrid.Children.Add(stackPanel);
             }
@@ -73,11 +72,13 @@ namespace AStar.WPF
                 }
             }
 
-            AStarGrid grid = new AStarGrid(nodes) {StartNode = startNode, EndNode = endNode};
+            Grid grid = new Grid(nodes) {StartNode = startNode, EndNode = endNode};
 
-            grid.IterationComplete += PathFindIterationComplete;
+            AStarPathFinder pathFinder = new AStarPathFinder(new ManhattanCalculator());
 
-            Task<IEnumerable<Node>> bestPathTask = grid.CalculatePathAsync(new ManhattanCalculator());
+            pathFinder.IterationComplete += PathFindIterationComplete;
+
+            Task<IEnumerable<Node>> bestPathTask = pathFinder.FindBestPathAsync(grid);
 
             foreach (NodeControl nodeControl in nodeControls)
             {
@@ -85,7 +86,7 @@ namespace AStar.WPF
             }
 
             IEnumerable<Node> bestPath = await bestPathTask;
-            
+
             foreach (NodeControl nodeInPath in bestPath.Select(node => nodeControls.First(x => x.Node.Equals(node))))
             {
                 if (nodeInPath.NodeType != NodeType.StartNode && nodeInPath.NodeType != NodeType.EndNode)
@@ -95,7 +96,7 @@ namespace AStar.WPF
             }
         }
 
-        private void PathFindIterationComplete(object sender, IterationDetails e)
+        private void PathFindIterationComplete(object sender, AStarPathFinderDetails e)
         {
             foreach (Node openNode in e.OpenNodes)
             {

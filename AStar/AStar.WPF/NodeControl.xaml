@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="50" d:DesignWidth="50" BorderThickness="0" Background="Transparent"
-             MouseLeftButtonDown="NodeControl_OnMouseLeftButtonDown">
+             MouseLeftButtonDown="NodeControl_OnMouseLeftButtonDown" MouseEnter="NodeControl_OnMouseEnter">
 
     <Border BorderThickness="1" BorderBrush="Black">
-        <Grid Name="NodeControlGrid" >
+        <Grid Name="NodeControlGrid">
             <StackPanel Orientation="Horizontal">
                 <Label FontSize="12" Name="Heuristic" />
-                <Label FontSize="12" Name="FValue" x:FieldModifier="private" Foreground="Red"/>
+                <Label FontSize="12" Name="FValue" x:FieldModifier="private" Foreground="Red" />
             </StackPanel>
         </Grid>
     </Border>

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace AStar
 {
-    public sealed class IterationDetails : EventArgs
+    public sealed class AStarPathFinderDetails : EventArgs
     {
         private readonly List<Node> closedNodes;
         private readonly List<Node> openNodes;
 
-        public IterationDetails(List<Node> openNodes, List<Node> closedNodes)
+        public AStarPathFinderDetails(List<Node> openNodes, List<Node> closedNodes)
         {
             this.openNodes = openNodes;
             this.closedNodes = closedNodes;

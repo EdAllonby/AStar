@@ -5,92 +5,62 @@ using System.Threading.Tasks;
 
 namespace AStar
 {
-    public sealed class AStarGrid
+    public class AStarPathFinder : IPathFinder, IIteratable<AStarPathFinderDetails>
     {
-        private const int DiagonalMoveCost = 5;
+        private const int DiagonalMoveCost = 2;
         private const int SimpleMoveCost = 1;
         private readonly List<Node> closedNodes = new List<Node>();
-        private readonly List<Node> nodes;
+        private readonly IHeuristicCalculator heuristicCalculator;
         private readonly List<Node> openNodes = new List<Node>();
 
-        public AStarGrid(List<Node> nodes)
+        public AStarPathFinder(IHeuristicCalculator heuristicCalculator)
         {
-            this.nodes = nodes;
+            this.heuristicCalculator = heuristicCalculator;
         }
 
-        public Node EndNode { get; set; }
-        public Node StartNode { get; set; }
+        public event EventHandler<AStarPathFinderDetails> IterationComplete;
 
-        public event EventHandler<IterationDetails> IterationComplete;
-
-        public Task<IEnumerable<Node>> CalculatePathAsync(IHeuristicCalculator heuristicCalculator)
+        public Task<IEnumerable<Node>> FindBestPathAsync(Grid grid)
         {
-            return Task.Factory.StartNew(() => CalculatePath(heuristicCalculator));
+            try
+            {
+                return Task.Factory.StartNew(() => FindBestPath(grid));
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
-        private IEnumerable<Node> CalculatePath(IHeuristicCalculator heuristicCalculator)
+        public IEnumerable<Node> FindBestPath(Grid grid)
         {
-            if (EndNode == null || StartNode == null)
+            if (grid.EndNode == null || grid.StartNode == null)
             {
                 return new List<Node>();
             }
 
             Reset();
 
-            CalculateHeuristics(heuristicCalculator);
-            NewIteration(StartNode);
+            CalculateNodeHeuristics(grid);
+            NewIteration(grid, grid.StartNode);
 
             bool foundPath = false;
 
             while (!foundPath)
             {
                 Node bestNode = FindBestNode();
-                NewIteration(bestNode);
+                NewIteration(grid, bestNode);
 
-                var endNodeParent = IsClosedNodeNextToEndNode();
+                Node endNodeParent = IsClosedNodeNextToEndNode(grid.EndNode);
 
                 if (endNodeParent != null)
                 {
                     foundPath = true;
-                    Reparent(endNodeParent, EndNode);
+                    Reparent(endNodeParent, grid.EndNode);
                 }
             }
 
-            return GetBestPath();
-        }
-
-        private void NewIteration(Node bestNode)
-        {
-            AddBestNodeToClosedNodes(bestNode);
-            CalculateMoveCostsToSurroundingNodes(bestNode);
-
-            if (IterationComplete != null)
-            {
-                IterationComplete(this, new IterationDetails(openNodes, closedNodes));
-            }
-        }
-
-        private IEnumerable<Node> GetBestPath()
-        {
-            List<Node> path = new List<Node> {EndNode};
-
-            bool startNodeFound = false;
-
-            Node lastNode = EndNode;
-
-            while (!startNodeFound)
-            {
-                lastNode = lastNode.Parent;
-
-                path.Add(lastNode);
-
-                if (lastNode.Equals(StartNode))
-                {
-                    startNodeFound = true;
-                }
-            }
-
-            return path;
+            return GetBestPath(grid);
         }
 
         private void Reset()
@@ -99,17 +69,52 @@ namespace AStar
             closedNodes.Clear();
         }
 
-        private Node IsClosedNodeNextToEndNode()
+        private void NewIteration(Grid grid, Node bestNode)
         {
-            return closedNodes.FirstOrDefault(x => x.Position.IsCoordinateNextTo(EndNode.Position));
+            AddBestNodeToClosedNodes(bestNode);
+
+            CalculateMoveCostsToSurroundingNodes(grid, bestNode);
+
+            if (IterationComplete != null)
+            {
+                IterationComplete(this, new AStarPathFinderDetails(openNodes, closedNodes));
+            }
         }
 
-        private void CalculateHeuristics(IHeuristicCalculator calculator)
+        private void CalculateNodeHeuristics(Grid grid)
         {
-            foreach (Node node in nodes)
+            foreach (Node currentNode in grid.Nodes)
             {
-                calculator.CalculateHeuristic(node, EndNode);
+                heuristicCalculator.CalculateHeuristic(currentNode, grid.EndNode);
             }
+        }
+
+        private static IEnumerable<Node> GetBestPath(Grid grid)
+        {
+            List<Node> path = new List<Node> {grid.EndNode};
+
+            bool startNodeFound = false;
+
+            Node lastNode = grid.EndNode;
+
+            while (!startNodeFound)
+            {
+                lastNode = lastNode.Parent;
+
+                path.Add(lastNode);
+
+                if (lastNode.Equals(grid.StartNode))
+                {
+                    startNodeFound = true;
+                }
+            }
+
+            return path;
+        }
+
+        private Node IsClosedNodeNextToEndNode(Node endNode)
+        {
+            return closedNodes.FirstOrDefault(x => x.Position.IsCoordinateNextTo(endNode.Position));
         }
 
         private void AddBestNodeToClosedNodes(Node bestNode)
@@ -123,9 +128,9 @@ namespace AStar
             return openNodes.OrderBy(node => node.F).First();
         }
 
-        private void CalculateMoveCostsToSurroundingNodes(Node currentNode)
+        private void CalculateMoveCostsToSurroundingNodes(Grid grid, Node currentNode)
         {
-            IEnumerable<Node> surroundingNodes = GetSurroundingNodes(currentNode).Where(node => !node.IsWall);
+            IEnumerable<Node> surroundingNodes = GetSurroundingNodes(grid, currentNode).Where(node => !node.IsWall);
 
             foreach (Node surroundingNode in surroundingNodes)
             {
@@ -153,9 +158,9 @@ namespace AStar
             child.Parent = parent;
         }
 
-        private IEnumerable<Node> GetSurroundingNodes(Node node)
+        private static IEnumerable<Node> GetSurroundingNodes(Grid grid, Node node)
         {
-            return nodes.Where(possibleSurroundingNode => possibleSurroundingNode.Position.IsCoordinateNextTo(node.Position));
+            return grid.Nodes.Where(possibleSurroundingNode => possibleSurroundingNode.Position.IsCoordinateNextTo(node.Position));
         }
     }
 }
